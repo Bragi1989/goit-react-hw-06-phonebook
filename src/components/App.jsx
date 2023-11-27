@@ -1,53 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, deleteContact, updateFilter } from './redux/contactsSlice';
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.items);
+  const filter = useSelector((state) => state.contacts.filter);
 
   useEffect(() => {
     const savedContacts = localStorage.getItem('contacts');
 
     if (savedContacts) {
-      setContacts(JSON.parse(savedContacts));
+      dispatch(addContact(JSON.parse(savedContacts)));
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
   const handleChangeFilter = (e) => {
-    setFilter(e.target.value);
+    dispatch(updateFilter(e.target.value));
   };
 
   const handleSubmit = (name, number) => {
     const normalizedContacts = contacts.map((contact) => ({
       ...contact,
-      name: contact.name.toLowerCase(),
+      name: contact.name ? contact.name.toLowerCase() : '',
     }));
 
-    const lowerCaseName = name.toLowerCase();
+    const lowerCaseName = name ? name.toLowerCase() : '';
 
     if (normalizedContacts.some((contact) => contact.name === lowerCaseName)) {
       alert(`${name} is already in contacts`);
       return;
     }
 
-    setContacts((prevContacts) => [
-      ...prevContacts,
-      { id: Date.now(), name: lowerCaseName, number },
-    ]);
+    dispatch(addContact({ id: Date.now(), name: lowerCaseName, number }));
   };
 
   const handleDeleteContact = (id) => {
-    setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== id));
+    dispatch(deleteContact(id));
   };
 
   const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
+    contact.name && contact.name.toLowerCase().includes(filter.toLowerCase())
   );
 
   return (

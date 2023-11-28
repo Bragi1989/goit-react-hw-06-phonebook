@@ -11,7 +11,7 @@ const contactsSlice = createSlice({
       state.items.push(action.payload);
     },
     deleteContact: (state, action) => {
-      state.items = state.items.filter((contact) => contact.id !== action.payload);
+      state.items = state.items.filter(contact => contact.id !== action.payload);
     },
     updateFilter: (state, action) => {
       state.filter = action.payload;
@@ -20,5 +20,4 @@ const contactsSlice = createSlice({
 });
 
 export const { addContact, deleteContact, updateFilter } = contactsSlice.actions;
-
 export default contactsSlice.reducer;

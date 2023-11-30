@@ -3,10 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 const loadState = () => {
   try {
     const serializedState = localStorage.getItem('contacts');
-    return serializedState ? JSON.parse(serializedState) : undefined;
+    return serializedState ? JSON.parse(serializedState) : { items: [], filter: '' };
   } catch (error) {
     console.error('Error loading state from localStorage:', error);
-    return undefined;
+    return { items: [], filter: '' };
   }
 };
 
@@ -21,10 +21,7 @@ const saveState = (state) => {
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: loadState() || {
-    items: [],
-    filter: '',
-  },
+  initialState: loadState(),
   reducers: {
     addContact: (state, action) => {
       const { id, name, number } = action.payload;
@@ -46,6 +43,7 @@ const contactsSlice = createSlice({
     },
     updateFilter: (state, action) => {
       state.filter = action.payload;
+      saveState(state);
     },
     clearContacts: (state) => {
       state.items = [];

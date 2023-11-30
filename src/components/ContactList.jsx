@@ -11,7 +11,7 @@ const ContactList = ({ contacts }) => {
 
   return (
     <div>
-      <ul>
+      <ul key="contact-list">
         {contacts.map((contact) => (
           <li key={contact.id}>
             {contact.name}: {contact.number}

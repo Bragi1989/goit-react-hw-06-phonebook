@@ -1,12 +1,11 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import contactsReducer from './contactsSlice';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import contactsReducer from './contactsSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['contacts'],
 };
 
 const persistedReducer = persistReducer(persistConfig, contactsReducer);
@@ -16,7 +15,9 @@ const store = configureStore({
     contacts: persistedReducer,
   },
   middleware: getDefaultMiddleware({
-    serializableCheck: false,
+    serializableCheck: {
+      ignoredActions: ['persist/PERSIST'],
+    },
   }),
 });
 

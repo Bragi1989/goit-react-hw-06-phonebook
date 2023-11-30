@@ -3,24 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
-import { addContact, clearContacts } from './redux/contactsSlice';
+import { addContact } from './redux/contactsSlice';
 
 const App = () => {
   const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts.items);
+  const filter = useSelector((state) => state.contacts.filter);
 
   useEffect(() => {
     const savedContacts = localStorage.getItem('contacts');
 
     if (savedContacts) {
-      const parsedContacts = JSON.parse(savedContacts);
-
-      
-      dispatch(clearContacts());
-
-      if (parsedContacts.length > 0) {
-        dispatch(addContact(parsedContacts));
-      }
+      dispatch(addContact(JSON.parse(savedContacts)));
     }
   }, [dispatch]);
 
@@ -28,7 +22,9 @@ const App = () => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  const filteredContacts = [...contacts];
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <div>
@@ -42,3 +38,6 @@ const App = () => {
 };
 
 export default App;
+
+
+

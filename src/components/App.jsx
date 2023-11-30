@@ -8,7 +8,7 @@ import { addContact } from './redux/contactsSlice';
 const App = () => {
   const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts.items);
-  const filter = useSelector((state) => state.contacts.filter);
+  const filter = useSelector((state) => state.contacts?.filter || '');
 
   useEffect(() => {
     const savedContacts = localStorage.getItem('contacts');

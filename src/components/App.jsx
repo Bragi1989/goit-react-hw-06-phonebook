@@ -7,7 +7,7 @@ import { addContact } from './redux/contactsSlice';
 
 const App = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector((state) => state.contacts?.items || []);
+  const contacts = useSelector((state) => state.contacts.items);
   const filter = useSelector((state) => state.contacts?.filter || '');
 
   useEffect(() => {
@@ -22,9 +22,11 @@ const App = () => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredContacts = contacts
+    ? contacts.filter((contact) =>
+        contact.name && contact.name.toLowerCase().includes(filter.toLowerCase())
+      )
+    : [];
 
   return (
     <div>

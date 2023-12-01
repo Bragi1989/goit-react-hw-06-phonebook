@@ -3,16 +3,18 @@ import { createSlice } from '@reduxjs/toolkit';
 const loadState = () => {
   try {
     const serializedState = localStorage.getItem('contacts');
-    return serializedState ? JSON.parse(serializedState) : { items: [], filter: '' };
+    return serializedState ? JSON.parse(serializedState) : undefined;
   } catch (error) {
     console.error('Error loading state from localStorage:', error);
-    return { items: [], filter: '' };
+    return undefined;
   }
 };
 
 const saveState = (state) => {
   try {
-    const serializedState = JSON.stringify(state);
+    const serializedState = JSON.stringify({
+      items: state.items,
+    });
     localStorage.setItem('contacts', serializedState);
   } catch (error) {
     console.error('Error saving state to localStorage:', error);
@@ -21,37 +23,33 @@ const saveState = (state) => {
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: loadState(),
+  initialState: loadState() || {
+    items: [],
+    filter: '',
+  },
   reducers: {
     addContact: (state, action) => {
       const { id, name, number } = action.payload;
 
-      if (!state.items) {
-        state.items = [];
-      }
-
       if (name && number) {
-        const existingContactIndex = state.items.findIndex(
-          (contact) => contact.name.toLowerCase() === name.toLowerCase()
+        const existingContact = state.items.find(
+          (contact) => contact.name && contact.name.toLowerCase() === name.toLowerCase()
         );
 
-        if (existingContactIndex === -1) {
+        if (!existingContact) {
           state.items.push({ id, name, number });
+        } else {
+          alert('Contact is not unique!');
         }
       }
       saveState(state);
     },
     deleteContact: (state, action) => {
-      if (!state.items) {
-        state.items = [];
-      }
-
       state.items = state.items.filter((contact) => contact.id !== action.payload);
       saveState(state);
     },
     updateFilter: (state, action) => {
       state.filter = action.payload;
-      saveState(state);
     },
     clearContacts: (state) => {
       state.items = [];

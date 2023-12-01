@@ -26,6 +26,10 @@ const contactsSlice = createSlice({
     addContact: (state, action) => {
       const { id, name, number } = action.payload;
 
+      if (!state.items) {
+        state.items = [];
+      }
+
       if (name && number) {
         const existingContactIndex = state.items.findIndex(
           (contact) => contact.name.toLowerCase() === name.toLowerCase()
@@ -38,6 +42,10 @@ const contactsSlice = createSlice({
       saveState(state);
     },
     deleteContact: (state, action) => {
+      if (!state.items) {
+        state.items = [];
+      }
+
       state.items = state.items.filter((contact) => contact.id !== action.payload);
       saveState(state);
     },

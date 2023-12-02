@@ -10,23 +10,21 @@ const App = () => {
   const contacts = useSelector((state) => state.contacts.items);
   const filter = useSelector((state) => state.contacts?.filter || '');
 
+useEffect(() => {
+  const savedContacts = localStorage.getItem('contacts');
+
+  if (savedContacts) {
+    dispatch(addContact(JSON.parse(savedContacts)));
+  }
+}, [dispatch]);
+
   useEffect(() => {
-    const savedContacts = localStorage.getItem('contacts');
+  localStorage.setItem('contacts', JSON.stringify(contacts));
+}, [contacts]);
 
-    if (savedContacts) {
-      dispatch(addContact(JSON.parse(savedContacts)));
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
-  const filteredContacts = contacts
-    ? contacts.filter((contact) =>
-        contact.name && contact.name.toLowerCase().includes(filter.toLowerCase())
-      )
-    : [];
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <div>
@@ -40,6 +38,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 

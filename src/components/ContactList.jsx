@@ -23,4 +23,4 @@ const ContactList = ({ contacts }) => {
   );
 };
 
-export default ContactList;
+export default ContactList;  

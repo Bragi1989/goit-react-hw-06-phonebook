@@ -2,23 +2,31 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: {
-    items: [],
-    filter: '',
-  },
+  initialState: { items: [], filter: '' },
   reducers: {
     addContact: (state, action) => {
-      const { id, name, number } = action.payload;
+      if (Array.isArray(action.payload)) {
+        const newContacts = action.payload.filter((newContact) => {
+          const existingContactIndex = state.items.findIndex(
+            (contact) => contact.name.toLowerCase() === newContact.name.toLowerCase()
+          );
+          return existingContactIndex === -1;
+        });
 
-      if (name && number) {
-        const existingContact = state.items.find(
-          (contact) => contact.name && contact.name.toLowerCase() === name.toLowerCase()
-        );
+        state.items.push(...newContacts);
+      } else {
+        const { id, name, number } = action.payload;
 
-        if (!existingContact) {
-          state.items.push({ id, name, number });
-        } else {
-          alert('Contact is not unique!');
+        if (name && number) {
+          const existingContactIndex = state.items.findIndex(
+            (contact) => contact.name.toLowerCase() === name.toLowerCase()
+          );
+
+          if (existingContactIndex === -1) {
+            state.items.push({ id, name, number });
+          } else {
+            alert('Contact is not unique!');
+          }
         }
       }
     },
